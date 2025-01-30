@@ -1,5 +1,6 @@
 package data;
 
+import data.Exceptions.InvalidStationIDException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +24,7 @@ class StationIDTest {
 
     @Test
     void testConstructor_NullID() {
-        Exception exception = assertThrows(StationID.InvalidStationIDException.class, () ->
+        Exception exception = assertThrows(InvalidStationIDException.class, () ->
                 new StationID(null)
         );
         assertEquals("El identificador de estación no puede ser null o vacío.", exception.getMessage());
@@ -31,7 +32,7 @@ class StationIDTest {
 
     @Test
     void testConstructor_EmptyID() {
-        Exception exception = assertThrows(StationID.InvalidStationIDException.class, () ->
+        Exception exception = assertThrows(InvalidStationIDException.class, () ->
                 new StationID("")
         );
         assertEquals("El identificador de estación no puede ser null o vacío.", exception.getMessage());
@@ -39,7 +40,7 @@ class StationIDTest {
 
     @Test
     void testConstructor_InvalidFormat() {
-        Exception exception = assertThrows(StationID.InvalidStationIDException.class, () ->
+        Exception exception = assertThrows(InvalidStationIDException.class, () ->
                 new StationID("123456ST")
         );
         assertEquals("El identificador de estación debe seguir el formato STXXXXXX.", exception.getMessage());

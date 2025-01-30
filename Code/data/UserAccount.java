@@ -1,5 +1,6 @@
 package data;
 
+import data.Exceptions.InvalidUserAccountException;
 import data.interfaces.UserAccountInterface;
 
 import java.util.Objects;
@@ -89,10 +90,6 @@ public class UserAccount implements UserAccountInterface {
     }
 
 
-    public static class InvalidUserAccountException extends RuntimeException {
-        public InvalidUserAccountException(String message) {
-            super(message);
-        }
-    }
+
 
 }

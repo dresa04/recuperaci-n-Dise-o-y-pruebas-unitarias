@@ -1,5 +1,6 @@
 package data;
 
+import data.Exceptions.InvalidUserAccountException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,35 +26,35 @@ class UserAccountTest {
 
     @Test
     void testConstructor_InvalidUserId() {
-        Exception exception = assertThrows(UserAccount.InvalidUserAccountException.class, () ->
+        Exception exception = assertThrows(InvalidUserAccountException.class, () ->
                 new UserAccount("", "testUser", "test@example.com", "password123", 100));
         assertEquals("El identificador de usuario no puede ser nulo o vacío.", exception.getMessage());
     }
 
     @Test
     void testConstructor_InvalidUsername() {
-        Exception exception = assertThrows(UserAccount.InvalidUserAccountException.class, () ->
+        Exception exception = assertThrows(InvalidUserAccountException.class, () ->
                 new UserAccount("123", "", "test@example.com", "password123", 100));
         assertEquals("El nombre de usuario no puede ser nulo o vacío.", exception.getMessage());
     }
 
     @Test
     void testConstructor_InvalidEmail() {
-        Exception exception = assertThrows(UserAccount.InvalidUserAccountException.class, () ->
+        Exception exception = assertThrows(InvalidUserAccountException.class, () ->
                 new UserAccount("123", "testUser", "invalid-email", "password123", 100));
         assertEquals("Dirección de correo electrónico no válida.", exception.getMessage());
     }
 
     @Test
     void testConstructor_InvalidPassword() {
-        Exception exception = assertThrows(UserAccount.InvalidUserAccountException.class, () ->
+        Exception exception = assertThrows(InvalidUserAccountException.class, () ->
                 new UserAccount("123", "testUser", "test@example.com", "123", 100));
         assertEquals("La contraseña debe tener al menos 6 caracteres.", exception.getMessage());
     }
 
     @Test
     void testConstructor_NegativeMonedero() {
-        Exception exception = assertThrows(UserAccount.InvalidUserAccountException.class, () ->
+        Exception exception = assertThrows(InvalidUserAccountException.class, () ->
                 new UserAccount("123", "testUser", "test@example.com", "password123", -10));
         assertEquals("El saldo del monedero no puede ser negativo.", exception.getMessage());
     }
@@ -71,7 +72,7 @@ class UserAccountTest {
         userAccount.setMonedero(200);
         assertEquals(200, userAccount.getMonedero());
 
-        Exception exception = assertThrows(UserAccount.InvalidUserAccountException.class, () ->
+        Exception exception = assertThrows(InvalidUserAccountException.class, () ->
                 userAccount.setMonedero(-50));
         assertEquals("El saldo del monedero no puede ser negativo.", exception.getMessage());
     }

@@ -1,5 +1,6 @@
 package data;
 
+import data.Exceptions.InvalidGeographicPointException;
 import data.interfaces.GeographicPointInterface;
 
 import java.util.Objects;
@@ -51,10 +52,6 @@ public final class GeographicPoint implements GeographicPointInterface {
                 '}';
     }
 
-    public class InvalidGeographicPointException extends RuntimeException {
-        public InvalidGeographicPointException(String message) {
-            super(message);
-        }
-    }
+
 
 }

@@ -1,5 +1,6 @@
 package data;
 
+import data.Exceptions.InvalidVehicleIDException;
 import data.interfaces.VehicleIDInterface;
 
 import java.util.Objects;
@@ -47,9 +48,5 @@ public final class VehicleID implements VehicleIDInterface {
         return "VehicleID{id=" + id + ", station=" + station + "}";
     }
 
-    public static class InvalidVehicleIDException extends RuntimeException {
-        public InvalidVehicleIDException(String message) {
-            super(message);
-        }
-    }
+
 }

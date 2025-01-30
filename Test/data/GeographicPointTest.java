@@ -1,6 +1,9 @@
 package data;
 
+
 import static org.junit.jupiter.api.Assertions.*;
+
+import data.Exceptions.InvalidGeographicPointException;
 import org.junit.jupiter.api.Test;
 
 class GeographicPointTest {
@@ -11,25 +14,25 @@ class GeographicPointTest {
 
     @Test
     void testInvalidLatitudeLow() {
-        Exception e = assertThrows(GeographicPoint.InvalidGeographicPointException.class, () -> new GeographicPoint(-91, 0));
+        Exception e = assertThrows(InvalidGeographicPointException.class, () -> new GeographicPoint(-91, 0));
         assertEquals("La latitud debe estar entre -90 y 90 grados.", e.getMessage());
     }
 
     @Test
     void testInvalidLatitudeHigh() {
-        Exception e = assertThrows(GeographicPoint.InvalidGeographicPointException.class, () -> new GeographicPoint(91, 0));
+        Exception e = assertThrows(InvalidGeographicPointException.class, () -> new GeographicPoint(91, 0));
         assertEquals("La latitud debe estar entre -90 y 90 grados.", e.getMessage());
     }
 
     @Test
     void testInvalidLongitudeLow() {
-        Exception e = assertThrows(GeographicPoint.InvalidGeographicPointException.class, () -> new GeographicPoint(0, -181));
+        Exception e = assertThrows(InvalidGeographicPointException.class, () -> new GeographicPoint(0, -181));
         assertEquals("La longitud debe estar entre -180 y 180 grados.", e.getMessage());
     }
 
     @Test
     void testInvalidLongitudeHigh() {
-        Exception e = assertThrows(GeographicPoint.InvalidGeographicPointException.class, () -> new GeographicPoint(0, 181));
+        Exception e = assertThrows(InvalidGeographicPointException.class, () -> new GeographicPoint(0, 181));
         assertEquals("La longitud debe estar entre -180 y 180 grados.", e.getMessage());
     }
 }

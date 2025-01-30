@@ -1,5 +1,6 @@
 package data;
 
+import data.Exceptions.InvalidStationIDException;
 import data.interfaces.StationIDInterface;
 import java.util.Objects;
 
@@ -38,9 +39,5 @@ public final class StationID implements StationIDInterface {
     public String toString() {
         return "StationID{" + "id='" + id + '\'' + '}';
     }
-    public class InvalidStationIDException extends RuntimeException {
-        public InvalidStationIDException(String message) {
-            super(message);
-        }
-    }
+
 }

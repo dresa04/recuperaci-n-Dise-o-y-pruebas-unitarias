@@ -1,6 +1,7 @@
 package data;
 
 
+import data.Exceptions.InvalidVehicleIDException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ class VehicleIDTest {
 
     @Test
     void testConstructor_InvalidID() {
-        Exception exception = assertThrows(VehicleID.InvalidVehicleIDException.class, () ->
+        Exception exception = assertThrows(InvalidVehicleIDException.class, () ->
                 new VehicleID(-1, station1)
         );
         assertEquals("El ID del vehículo debe ser un número positivo.", exception.getMessage());
@@ -37,7 +38,7 @@ class VehicleIDTest {
 
     @Test
     void testConstructor_NullStation() {
-        Exception exception = assertThrows(VehicleID.InvalidVehicleIDException.class, () ->
+        Exception exception = assertThrows(InvalidVehicleIDException.class, () ->
                 new VehicleID(100, null)
         );
         assertEquals("La estación asociada no puede ser null.", exception.getMessage());
