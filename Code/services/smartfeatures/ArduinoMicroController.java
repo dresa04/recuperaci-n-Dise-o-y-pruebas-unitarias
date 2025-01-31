@@ -2,6 +2,7 @@ package services.smartfeatures;
 
 import services.Exceptions.PMVPhisicalException;
 import services.Exceptions.ProceduralException;
+import services.smartfeatures.Interfaces.ArduinoMicroControllerInterface;
 
 import java.net.ConnectException;
 import java.util.Random;

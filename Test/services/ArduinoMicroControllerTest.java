@@ -2,10 +2,9 @@ package services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import services.Exceptions.PMVPhisicalException;
 import services.Exceptions.ProceduralException;
 import services.smartfeatures.ArduinoMicroController;
-import services.smartfeatures.ArduinoMicroControllerInterface;
+import services.smartfeatures.Interfaces.ArduinoMicroControllerInterface;
 
 import java.net.ConnectException;
 

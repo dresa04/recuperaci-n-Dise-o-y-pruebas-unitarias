@@ -1,4 +1,4 @@
-package services.smartfeatures;
+package services.smartfeatures.Interfaces;
 
 import services.Exceptions.BTConnectionException;
 

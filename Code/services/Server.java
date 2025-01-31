@@ -8,7 +8,6 @@ import data.VehicleID;
 import services.Exceptions.InvalidPairingArgsException;
 import services.Exceptions.PMVNotAvailException;
 import services.Exceptions.PairingNotFoundException;
-import services.Interfaces.ServerInterface;
 
 import java.math.BigDecimal;
 import java.net.ConnectException;

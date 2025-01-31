@@ -1,4 +1,4 @@
-package services.Interfaces;
+package services;
 
 import java.net.ConnectException;
 import data.GeographicPoint;

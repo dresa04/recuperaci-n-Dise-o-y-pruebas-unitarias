@@ -1,6 +1,7 @@
 package services.smartfeatures;
 
 import services.Exceptions.BTConnectionException;
+import services.smartfeatures.Interfaces.UnbondedBTSignalInterface;
 
 import java.util.concurrent.TimeUnit;
 

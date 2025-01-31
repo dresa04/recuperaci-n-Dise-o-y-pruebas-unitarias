@@ -3,6 +3,7 @@ package services.smartfeatures;
 import data.StationID;
 import data.VehicleID;
 import services.Exceptions.QRImgException;
+import services.smartfeatures.Interfaces.QRDecoderInterface;
 
 import java.awt.image.BufferedImage;
 import java.util.Random;

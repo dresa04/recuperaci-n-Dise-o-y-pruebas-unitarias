@@ -1,4 +1,4 @@
-package services.smartfeatures;
+package services.smartfeatures.Interfaces;
 
 import data.VehicleID;
 import services.Exceptions.QRImgException;
