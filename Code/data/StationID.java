@@ -7,7 +7,7 @@ import java.util.Objects;
 public final class StationID implements StationIDInterface {
     private final String id;
 
-    public StationID(String id) {
+    public StationID(int id) {
         if (id == null || id.isEmpty()) {
             throw new InvalidStationIDException("El identificador de estación no puede ser null o vacío.");
         }
