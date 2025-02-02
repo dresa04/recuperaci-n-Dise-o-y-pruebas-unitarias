@@ -34,14 +34,14 @@ class JourneyServiceTest {
     @Test
     void testSetAndGetInitDate() {
         LocalDateTime initDate = LocalDateTime.now();
-        journeyService.setInitDate(initDate);
+        journeyService.setInitDate(String.valueOf(initDate));
         assertEquals(initDate, journeyService.getInitDate(), "El valor de initDate no es correcto");
     }
 
     @Test
     void testSetAndGetInitHour() {
         int initHour = 10;
-        journeyService.setInitHour(initHour);
+        journeyService.setInitHour(String.valueOf(initHour));
         assertEquals(initHour, journeyService.getInitHour(), "El valor de initHour no es correcto");
     }
 
@@ -55,16 +55,17 @@ class JourneyServiceTest {
     @Test
     void testSetAndGetDistance() {
         float distance = 10.5f;
-        journeyService.setDistance(distance);
-        assertEquals(distance, journeyService.getDistance(), "El valor de distance no es correcto");
+        journeyService.setDistance(BigDecimal.valueOf(distance));
+        assertEquals(distance, journeyService.getDistance().floatValue(), 0.0001, "El valor de distance no es correcto");
     }
 
     @Test
     void testSetAndGetAvgSpeed() {
         float avgSpeed = 15.2f;
-        journeyService.setAvgSpeed(avgSpeed);
-        assertEquals(avgSpeed, journeyService.getAvgSpeed(), "El valor de avgSpeed no es correcto");
+        journeyService.setAvgSpeed(BigDecimal.valueOf(avgSpeed));
+        assertEquals(avgSpeed, journeyService.getAvgSpeed().floatValue(), 0.0001, "El valor de avgSpeed no es correcto");
     }
+
 
     @Test
     void testSetAndGetOriginPoint() {
@@ -89,21 +90,21 @@ class JourneyServiceTest {
     @Test
     void testSetAndGetEndDate() {
         LocalDateTime endDate = LocalDateTime.now().plusHours(1);
-        journeyService.setEndDate(endDate);
+        journeyService.setEndDate(String.valueOf(endDate));
         assertEquals(endDate, journeyService.getEndDate(), "El valor de endDate no es correcto");
     }
 
     @Test
     void testSetAndGetEndHour() {
         int endHour = 11;
-        journeyService.setEndHour(endHour);
+        journeyService.setEndHour(String.valueOf(endHour));
         assertEquals(endHour, journeyService.getEndHour(), "El valor de endHour no es correcto");
     }
 
     @Test
     void testSetAndGetImportAmount() {
         BigDecimal importAmount = new BigDecimal("25.75");
-        journeyService.setImportAmount(importAmount);
+        journeyService.setImport(importAmount);
         assertEquals(importAmount, journeyService.getImportAmount(), "El valor de importAmount no es correcto");
     }
 
@@ -117,7 +118,7 @@ class JourneyServiceTest {
     @Test
     void testSetAndGetInProgress() {
         journeyService.setInProgress(true);
-        assertTrue(journeyService.isInProgress(), "El valor de inProgress no es correcto");
+        assertTrue(journeyService.getInProgress(), "El valor de inProgress no es correcto");
     }
 
     @Test

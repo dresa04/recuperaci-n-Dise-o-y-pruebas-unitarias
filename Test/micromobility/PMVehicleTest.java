@@ -43,7 +43,7 @@ class PMVehicleTest {
     @Test
     void testSetUnderWayWhenNotAvailable() throws ProceduralException {
         vehicle.setNotAvailb();
-        ProceduralException exception = assertThrows(ProceduralException.class, vehicle::setUnderWay);
+        ProceduralException exception = assertThrows(ProceduralException.class, PMVehicle::setUnderWay);
         assertEquals("No se puede iniciar un trayecto si el vehículo no está disponible.", exception.getMessage());
     }
 

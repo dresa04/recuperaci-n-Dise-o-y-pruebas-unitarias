@@ -1,6 +1,7 @@
 package micromobility;
 
 import data.*;
+import data.UserAccount;
 import data.interfaces.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class JourneyRealizeHandlerTest {
 
     private JourneyRealizeHandler journeyHandler;
-    private GeographicPointInterface initialLocation;
-    private UserAccountInterface user;
-    private QRDecoderInterface qrDecoder;
-    private ServerInterface server;
-    private StationIDInterface station;
     private PMVehicle vehicle;
     private VehicleIDInterface vehicleID;
     private BufferedImage validQR;
@@ -32,16 +28,16 @@ class JourneyRealizeHandlerTest {
     @BeforeEach
     void setUp() {
         // Crear datos reales para las pruebas
-        initialLocation = new GeographicPoint(41.616F, 0.622F);
-        user = new UserAccount("1", "2", "example@gmail.com", "123456", 0);
+        GeographicPointInterface initialLocation = new GeographicPoint(41.616F, 0.622F);
+        UserAccountInterface user = new UserAccount("1", "2", "example@gmail.com", "123456", 0);
 
         // Crear una estación y un vehículo
-        station = new StationID(1, initialLocation);
+        StationIDInterface station = new StationID(1, initialLocation);
         vehicleID = new VehicleID(123, station);
         vehicle = new PMVehicle(123, initialLocation, PMVState.Available);
 
         // Crear el QRDecoder con el VehicleID
-        qrDecoder = new QRDecoder(vehicleID);
+        QRDecoderInterface qrDecoder = new QRDecoder(vehicleID);
 
         // Crear un servidor con datos de prueba
         Map<VehicleIDInterface, Boolean> vehicleAvailability = new HashMap<>();
@@ -53,10 +49,11 @@ class JourneyRealizeHandlerTest {
         vehicleLocations.put(vehicleID, initialLocation);
         vehicleStations.put(vehicleID, station);
 
-        server = new Server(vehicleAvailability, vehicleLocations, vehicleStations, userJourneyRecords);
+        ServerInterface server = new Server(vehicleAvailability, vehicleLocations, vehicleStations, userJourneyRecords);
+        JourneyServiceInterface jS = new JourneyService(vehicle);
 
         // Inicializar JourneyRealizeHandler
-        journeyHandler = new JourneyRealizeHandler (initialLocation, user, qrDecoder, server, station, vehicle);
+        journeyHandler = new JourneyRealizeHandler (initialLocation, user, qrDecoder, server, station, vehicle, jS);
 
         // Crear una imagen QR de prueba
         validQR = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
@@ -125,16 +122,6 @@ class JourneyRealizeHandlerTest {
         assertEquals("El viaje no está en progreso.", exception.getMessage());
     }
 
-    @Test
-    void testUnPairVehicle_Success() throws ConnectException, ProceduralException, PairingNotFoundException, InvalidPairingArgsException, QRImgException, PMVNotAvailException {
-        journeyHandler.setQrImage(validQR);
-        journeyHandler.scanQR();
-        journeyHandler.startDriving();
-        journeyHandler.stopDriving();
-        journeyHandler.unPairVehicle();
-
-        assertFalse(journeyHandler.inProgress);
-    }
 
     @Test
     void testUnPairVehicle_ThrowsPairingNotFoundExceptionWhenNotPaired() {

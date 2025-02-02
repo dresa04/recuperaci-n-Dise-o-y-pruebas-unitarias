@@ -15,5 +15,5 @@ public interface UnbondedBTSignalInterface {
      *
      * @throws ConnectException Si ocurre un error en la conexión Bluetooth.
      */
-    void BTbroadcast() throws ConnectException, BTConnectionException;
+    void BTbroadcast() throws ConnectException, BTConnectionException, InterruptedException;
 }

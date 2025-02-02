@@ -1,10 +1,6 @@
 package services;
 
 import java.net.ConnectException;
-import data.GeographicPoint;
-import data.StationID;
-import data.UserAccount;
-import data.VehicleID;
 import data.interfaces.GeographicPointInterface;
 import data.interfaces.StationIDInterface;
 import data.interfaces.UserAccountInterface;
@@ -25,7 +21,7 @@ public interface ServerInterface { // External service for the persistent storag
     void registerPairing(UserAccountInterface user, VehicleIDInterface veh, StationIDInterface st, GeographicPointInterface loc, LocalDateTime date, JourneyServiceInterface journey)
             throws InvalidPairingArgsException, ConnectException;
     void stopPairing(UserAccountInterface user, VehicleIDInterface veh, StationIDInterface st,
-                     GeographicPointInterface loc, LocalDateTime date, float avSp, float dist,
+                     GeographicPointInterface loc, LocalDateTime date, BigDecimal avSp, BigDecimal dist,
                      int dur, BigDecimal imp, JourneyServiceInterface journey)
             throws InvalidPairingArgsException, ConnectException;
     // Internal operations

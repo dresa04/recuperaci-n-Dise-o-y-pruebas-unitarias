@@ -67,7 +67,7 @@ class ServerTest {
     @Test
     void testCheckPMVAvail_VehicleNotAvailable_ThrowsPMVNotAvailException() throws ConnectException, InvalidPairingArgsException {
         // Finalizamos un pairing y dejamos el vehículo no disponible
-        server.stopPairing(user, vehicle, station, location, date, 20f, 5f, 10, new BigDecimal("2.5"), journey);
+        server.stopPairing(user, vehicle, station, location, date, new BigDecimal(20), new BigDecimal(5), 10, new BigDecimal("2.5"), journey);
 
         assertDoesNotThrow(() -> server.checkPMVAvail(vehicle));
     }
@@ -97,7 +97,7 @@ class ServerTest {
         VehicleIDInterface unregisteredVehicle = new VehicleID(999, new StationID(2, new GeographicPoint(3.0F, 4.0F)));
 
         ConnectException exception = assertThrows(ConnectException.class, () -> {
-            server.stopPairing(user, unregisteredVehicle, station, location, date, 20f, 5f, 10, new BigDecimal("2.5"), journey);
+            server.stopPairing(user, unregisteredVehicle, station, location, date, new BigDecimal(20), new BigDecimal(5), 10, new BigDecimal("2.5"), journey);
         });
         assertEquals("El vehículo no está registrado en el servidor.", exception.getMessage());
     }
@@ -107,7 +107,7 @@ class ServerTest {
         StationIDInterface wrongStation = new StationID(2, new GeographicPoint(3.0F, 4.0F));
 
         InvalidPairingArgsException exception = assertThrows(InvalidPairingArgsException.class, () -> {
-            server.stopPairing(user, vehicle, wrongStation, location, date, 20f, 5f, 10, new BigDecimal("2.5"), journey);
+            server.stopPairing(user, vehicle, wrongStation, location, date, new BigDecimal(20), new BigDecimal(5), 10, new BigDecimal("2.5"), journey);
         });
         assertEquals("La estación proporcionada no coincide con la estación del vehículo.", exception.getMessage());
     }
@@ -116,7 +116,7 @@ class ServerTest {
     void testStopPairing_Success() throws InvalidPairingArgsException, ConnectException {
         // Registrar pairing y detenerlo
         server.registerPairing(user, vehicle, station, location, date, journey);
-        server.stopPairing(user, vehicle, station, location, date, 20f, 5f, 10, new BigDecimal("2.5"), journey);
+        server.stopPairing(user, vehicle, station, location, date, new BigDecimal(20), new BigDecimal(5), 10, new BigDecimal("2.5"), journey);
 
         // Verificar que no lanza excepciones
         assertDoesNotThrow(() -> server.checkPMVAvail(vehicle));

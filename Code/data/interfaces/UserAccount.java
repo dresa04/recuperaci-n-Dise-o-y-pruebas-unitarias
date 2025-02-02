@@ -1,7 +1,6 @@
-package data;
+package data.interfaces;
 
 import data.Exceptions.InvalidUserAccountException;
-import data.interfaces.UserAccountInterface;
 
 import java.util.Objects;
 

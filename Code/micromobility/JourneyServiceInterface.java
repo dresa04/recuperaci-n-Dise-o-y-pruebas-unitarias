@@ -17,6 +17,9 @@ public interface JourneyServiceInterface {
 
     // Obtener y establecer el punto de origen del viaje
     void setOriginPoint(GeographicPointInterface originPoint);
+
+    void updateCurrentLocation(GeographicPointInterface location);
+
     GeographicPointInterface getOriginPoint();
 
     // Obtener y establecer el punto de destino del viaje
@@ -36,12 +39,12 @@ public interface JourneyServiceInterface {
     double getDuration();
 
     // Obtener y establecer la distancia del viaje
-    void setDistance(double distance);
-    double getDistance();
+    void setDistance(BigDecimal distance);
+    BigDecimal getDistance();
 
     // Obtener y establecer la velocidad promedio durante el viaje
-    void setAvgSpeed(double avgSpeed);
-    double getAvgSpeed();
+    void setAvgSpeed(BigDecimal avgSpeed);
+    BigDecimal getAvgSpeed();
 
     // Obtener y establecer el importe del viaje
     void setImport(BigDecimal imp);
@@ -53,7 +56,7 @@ public interface JourneyServiceInterface {
 
     void setServiceInit(LocalDateTime initDate, GeographicPointInterface Origin);
 
-    void setServiceFinish(LocalDateTime endDate, GeographicPointInterface End, BigDecimal imp, float avSP, float dist, float duration);
+    void setServiceFinish(LocalDateTime endDate, GeographicPointInterface End, BigDecimal imp, BigDecimal avSP, BigDecimal dist, float duration);
 
 
     // Obtener el ID del servicio de viaje

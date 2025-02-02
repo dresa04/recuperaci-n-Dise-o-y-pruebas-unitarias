@@ -4,10 +4,7 @@ import data.StationID;
 import data.GeographicPoint; // Asegúrate de importar la clase GeographicPoint
 import data.UserAccount;
 import data.VehicleID; // Asegúrate de que esta clase implemente VehicleIDInterface
-import micromobility.JourneyRealizeHandler;
-import micromobility.JourneyServiceInterface;
-import micromobility.PMVState;
-import micromobility.PMVehicle;
+import micromobility.*;
 import org.junit.jupiter.api.Test;
 import services.smartfeatures.QRDecoder;
 import services.smartfeatures.UnbondedBTSignal;
@@ -64,7 +61,7 @@ class UnbondedBTSignalTest {
 
 // Crear un vehículo de prueba
         PMVehicle vehicle = new PMVehicle(vehicleID.getId(), station.getgeoPoint(), PMVState.Available);
-
+        JourneyServiceInterface jS = new JourneyService(vehicle);
 // Ahora sí, crear el JourneyRealizeHandler con todos los parámetros
         JourneyRealizeHandler journeyHandler = new JourneyRealizeHandler(
                 initialLocation, // location
@@ -72,7 +69,8 @@ class UnbondedBTSignalTest {
                 qrDecoder,       // qrDecoder
                 server,          // server
                 station,         // initialStation
-                vehicle          // vehicle
+                vehicle,          // vehicle
+                jS
         );
 
         // Crear la instancia de UnbondedBTSignal con la station, broadcastHistory y journeyHandler
@@ -82,7 +80,7 @@ class UnbondedBTSignalTest {
         Thread broadcastThread = new Thread(() -> {
             try {
                 btSignal.BTbroadcast();
-            } catch (ConnectException e) {
+            } catch (ConnectException | InterruptedException e) {
                 fail("ConnectException should not occur during normal execution");
             }
         });
@@ -151,6 +149,8 @@ class UnbondedBTSignalTest {
 // Crear un vehículo de prueba
         PMVehicle vehicle = new PMVehicle(vehicleID.getId(), station.getgeoPoint(), PMVState.Available);
 
+        JourneyServiceInterface jS = new JourneyService(vehicle);
+
 // Ahora sí, crear el JourneyRealizeHandler con todos los parámetros
         JourneyRealizeHandler journeyHandler = new JourneyRealizeHandler(
                 initialLocation, // location
@@ -158,7 +158,8 @@ class UnbondedBTSignalTest {
                 qrDecoder,       // qrDecoder
                 server,          // server
                 station,         // initialStation
-                vehicle          // vehicle
+                vehicle,          // vehicle
+                jS
         );
         // Verificar que se lanza la excepción correctamente si el broadcastHistory es null
         Exception exception = assertThrows(IllegalArgumentException.class, () -> new UnbondedBTSignal(journeyHandler,station, null),
