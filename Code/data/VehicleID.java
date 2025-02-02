@@ -1,32 +1,32 @@
 package data;
 
 import data.Exceptions.InvalidVehicleIDException;
+import data.interfaces.StationIDInterface;
 import data.interfaces.VehicleIDInterface;
 
 import java.util.Objects;
 
+
 public final class VehicleID implements VehicleIDInterface {
     private final int id;
-    private final StationID station;
+    private final StationIDInterface station;
 
-    public VehicleID(int id, StationID station) {
-        if (id <= 0) {
-            throw new InvalidVehicleIDException("El ID del vehículo debe ser un número positivo.");
-        }
+    public VehicleID(int id, StationIDInterface station) {
         if (station == null) {
-            throw new InvalidVehicleIDException("La estación asociada no puede ser null.");
+            throw new InvalidVehicleIDException("La estació no pot ser null.");
+        }
+        if (id <= 0) {
+            throw new InvalidVehicleIDException("L'ID del vehicle ha de ser un nombre positiu.");
         }
         this.id = id;
         this.station = station;
     }
 
-    @Override
     public int getId() {
         return id;
     }
 
-    @Override
-    public StationID getStation() {
+    public StationIDInterface getStation() {
         return station;
     }
 
@@ -45,8 +45,9 @@ public final class VehicleID implements VehicleIDInterface {
 
     @Override
     public String toString() {
-        return "VehicleID{id=" + id + ", station=" + station + "}";
+        return "VehicleID{" +
+                "id=" + id +
+                ", station=" + station +
+                '}';
     }
-
-
 }

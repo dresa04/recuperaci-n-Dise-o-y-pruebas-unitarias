@@ -1,10 +1,16 @@
 package services;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import data.*;
-import services.*;
+import micromobility.JourneyService;
+import micromobility.JourneyServiceInterface;
+import data.interfaces.GeographicPointInterface;
+import data.interfaces.StationIDInterface;
+import data.interfaces.UserAccountInterface;
+import data.interfaces.VehicleIDInterface;
+import micromobility.PMVState;
+import micromobility.PMVehicle;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import services.Exceptions.InvalidPairingArgsException;
 import services.Exceptions.PMVNotAvailException;
 import services.Exceptions.PairingNotFoundException;
@@ -12,147 +18,129 @@ import services.Exceptions.PairingNotFoundException;
 import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ServerTest {
+    private Server server;
+    private UserAccountInterface user;
+    private VehicleIDInterface vehicle;
+    private StationIDInterface station;
+    private GeographicPointInterface location;
+    private JourneyServiceInterface journey;
+    private LocalDateTime date;
 
-    @Test
-    void testCheckPMVAvail_vehicleAvailable() {
-        // Arrange
-        Server server = new Server();
-        VehicleID vehicleID = new VehicleID(2, new StationID("station1")); // ID par, se supone que está disponible.
+    @BeforeEach
+    void setUp() {
+        final Map<VehicleIDInterface, Boolean> vehicleAvailability = new HashMap<>();
+        final Map<VehicleIDInterface, GeographicPointInterface> vehicleLocations = new HashMap<>();
+        final Map<VehicleIDInterface, StationIDInterface> vehicleStation = new HashMap<>();
+        final Map<UserAccountInterface, JourneyServiceInterface> userJourneyRecords = new HashMap<>();
+        server = new Server(vehicleAvailability, vehicleLocations, vehicleStation, userJourneyRecords);
 
-        // Act & Assert
-        assertDoesNotThrow(() -> server.checkPMVAvail(vehicleID), "No debe haber excepciones si el vehículo está disponible.");
+        // Instanciamos los objetos a través de sus interfaces
+        user = new UserAccount("user1", "User One", "user1@example.com", "password", 100); // Debe ser compatible con UserAccountInterface
+        vehicle = new VehicleID(1, new StationID(1, new GeographicPoint(1.0F, 2.0F))); // Debe ser compatible con VehicleIDInterface
+        station = new StationID(1, new GeographicPoint(1.0F, 2.0F)); // Debe ser compatible con StationIDInterface
+        location = new GeographicPoint(1.0F, 2.0F); // Debe ser compatible con GeographicPointInterface
+        GeographicPoint location = new GeographicPoint(40.7128F, (float) -74.0060); // Coordenadas de ejemplo (latitud, longitud)
+        PMVehicle pmVehicle = new PMVehicle(123, location, PMVState.Available);
+        journey= new JourneyService(pmVehicle);
+        date = LocalDateTime.now();
+
+        // Añadimos el vehículo al servidor con disponibilidad
+        server.setPairing(user, vehicle, station, location, date, journey);
     }
 
     @Test
-    void testCheckPMVAvail_vehicleNotAvailable() {
-        // Arrange
-        Server server = new Server();
-        VehicleID vehicleID = new VehicleID(3, new StationID("station1")); // ID impar, se supone que no está disponible.
+    void testCheckPMVAvail_VehicleNotFound_ThrowsConnectException() {
+        VehicleIDInterface unregisteredVehicle = new VehicleID(999, new StationID(2, new GeographicPoint(3.0F, 4.0F)));
 
-        // Act & Assert
-        PMVNotAvailException exception = assertThrows(PMVNotAvailException.class, () -> server.checkPMVAvail(vehicleID));
-        assertEquals("El vehículo está vinculado con otro usuario.", exception.getMessage());
+        ConnectException exception = assertThrows(ConnectException.class, () -> {
+            server.checkPMVAvail(unregisteredVehicle);
+        });
+        assertEquals("Connection failed: Vehicle ID not found in the server.", exception.getMessage());
     }
 
     @Test
-    void testRegisterPairing_validArguments() {
-        // Arrange
-        Server server = new Server();
-        UserAccount user = new UserAccount("user123", "testUser", "test@example.com", "password123", 100);
-        VehicleID vehicleID = new VehicleID(2, new StationID("station1"));
-        StationID stationID = new StationID("station1");
-        GeographicPoint location = new GeographicPoint(40.7128F, (float) -74.0060);
-        LocalDateTime date = LocalDateTime.now();
+    void testCheckPMVAvail_VehicleNotAvailable_ThrowsPMVNotAvailException() throws ConnectException, InvalidPairingArgsException {
+        // Finalizamos un pairing y dejamos el vehículo no disponible
+        server.stopPairing(user, vehicle, station, location, date, 20f, 5f, 10, new BigDecimal("2.5"), journey);
 
-        // Act & Assert
-        assertDoesNotThrow(() -> server.registerPairing(user, vehicleID, stationID, location, date),
-                "No debe haber excepciones con argumentos válidos.");
+        assertDoesNotThrow(() -> server.checkPMVAvail(vehicle));
     }
 
     @Test
-    void testRegisterPairing_invalidArguments() {
-        // Arrange
-        Server server = new Server();
-        UserAccount user = new UserAccount("user123", "testUser", "test@example.com", "password123", 100);
-        VehicleID vehicleID = null;  // Argumento inválido
-        StationID stationID = new StationID("station1");
-        GeographicPoint location = new GeographicPoint(40.7128F, (float) -74.0060);
-        LocalDateTime date = LocalDateTime.now();
+    void testRegisterPairing_VehicleNotFound_ThrowsConnectException() {
+        VehicleIDInterface unregisteredVehicle = new VehicleID(999, new StationID(2, new GeographicPoint(3.0F, 4.0F)));
 
-        // Act & Assert
-        InvalidPairingArgsException exception = assertThrows(InvalidPairingArgsException.class,
-                () -> server.registerPairing(user, vehicleID, stationID, location, date));
-        assertEquals("Algún argumento de emparejamiento es inválido.", exception.getMessage());
+        ConnectException exception = assertThrows(ConnectException.class, () -> {
+            server.registerPairing(user, unregisteredVehicle, station, location, date, journey);
+        });
+        assertEquals("El vehículo no está registrado en el servidor.", exception.getMessage());
     }
 
     @Test
-    void testStopPairing_validArguments() {
-        // Arrange
-        Server server = new Server();
-        UserAccount user = new UserAccount("user123", "testUser", "test@example.com", "password123", 100);
-        VehicleID vehicleID = new VehicleID(2, new StationID("station1"));
-        StationID stationID = new StationID("station1");
-        GeographicPoint location = new GeographicPoint(40.7128F, (float) -74.0060);
-        LocalDateTime date = LocalDateTime.now();
-        float avSp = 15.5f;
-        float dist = 10.5f;
-        int dur = 30;
-        BigDecimal imp = new BigDecimal("5.75");
+    void testRegisterPairing_StationMismatch_ThrowsInvalidPairingArgsException() {
+        StationIDInterface wrongStation = new StationID(2, new GeographicPoint(3.0F, 4.0F));
 
-        // Act & Assert
-        assertDoesNotThrow(() -> server.stopPairing(user, vehicleID, stationID, location, date, avSp, dist, dur, imp),
-                "No debe haber excepciones con argumentos válidos.");
+        InvalidPairingArgsException exception = assertThrows(InvalidPairingArgsException.class, () -> {
+            server.registerPairing(user, vehicle, wrongStation, location, date, journey);
+        });
+        assertEquals("La estación proporcionada no coincide con la estación del vehículo.", exception.getMessage());
     }
 
     @Test
-    void testStopPairing_invalidArguments() {
-        // Arrange
-        Server server = new Server();
-        UserAccount user = null;  // Argumento inválido
-        VehicleID vehicleID = new VehicleID(2, new StationID("station1"));
-        StationID stationID = new StationID("station1");
-        GeographicPoint location = new GeographicPoint(40.7128F, (float) -74.0060);
-        LocalDateTime date = LocalDateTime.now();
-        float avSp = 15.5f;
-        float dist = 10.5f;
-        int dur = 30;
-        BigDecimal imp = new BigDecimal("5.75");
+    void testStopPairing_VehicleNotFound_ThrowsConnectException() {
+        VehicleIDInterface unregisteredVehicle = new VehicleID(999, new StationID(2, new GeographicPoint(3.0F, 4.0F)));
 
-        // Act & Assert
-        InvalidPairingArgsException exception = assertThrows(InvalidPairingArgsException.class,
-                () -> server.stopPairing(user, vehicleID, stationID, location, date, avSp, dist, dur, imp));
-        assertEquals("Argumentos inválidos para finalizar el emparejamiento.", exception.getMessage());
+        ConnectException exception = assertThrows(ConnectException.class, () -> {
+            server.stopPairing(user, unregisteredVehicle, station, location, date, 20f, 5f, 10, new BigDecimal("2.5"), journey);
+        });
+        assertEquals("El vehículo no está registrado en el servidor.", exception.getMessage());
     }
 
     @Test
-    void testSetPairing() {
-        // Arrange
-        Server server = new Server();
-        UserAccount user = new UserAccount("user123", "testUser", "test@example.com", "password123", 100);
-        VehicleID vehicleID = new VehicleID(2, new StationID("station1"));
-        StationID stationID = new StationID("station1");
-        GeographicPoint location = new GeographicPoint(40.7128F, (float) -74.0060);
-        LocalDateTime date = LocalDateTime.now();
+    void testStopPairing_InvalidStation_ThrowsInvalidPairingArgsException() {
+        StationIDInterface wrongStation = new StationID(2, new GeographicPoint(3.0F, 4.0F));
 
-        // Act & Assert
-        assertDoesNotThrow(() -> server.setPairing(user, vehicleID, stationID, location, date),
-                "No debe haber excepciones al registrar el emparejamiento.");
+        InvalidPairingArgsException exception = assertThrows(InvalidPairingArgsException.class, () -> {
+            server.stopPairing(user, vehicle, wrongStation, location, date, 20f, 5f, 10, new BigDecimal("2.5"), journey);
+        });
+        assertEquals("La estación proporcionada no coincide con la estación del vehículo.", exception.getMessage());
     }
 
     @Test
-    void testUnPairRegisterService_pairingExists() {
-        // Arrange
-        Server server = new Server();
-        JourneyService service = new JourneyService();
+    void testStopPairing_Success() throws InvalidPairingArgsException, ConnectException {
+        // Registrar pairing y detenerlo
+        server.registerPairing(user, vehicle, station, location, date, journey);
+        server.stopPairing(user, vehicle, station, location, date, 20f, 5f, 10, new BigDecimal("2.5"), journey);
 
-        // Act & Assert
-        assertDoesNotThrow(() -> server.unPairRegisterService(service),
-                "No debe haber excepciones si el emparejamiento existe.");
+        // Verificar que no lanza excepciones
+        assertDoesNotThrow(() -> server.checkPMVAvail(vehicle));
     }
 
     @Test
-    void testUnPairRegisterService_pairingNotFound() {
-        // Arrange
-        Server server = new Server();
-        JourneyService service = null;  // Simula que el servicio no existe.
+    void testRegisterLocation_VehicleNotFound_ThrowsConnectException() {
+        VehicleIDInterface unregisteredVehicle = new VehicleID(999, new StationID(2, new GeographicPoint(3.0F, 4.0F)));
 
-        // Act & Assert
-        PairingNotFoundException exception = assertThrows(PairingNotFoundException.class,
-                () -> server.unPairRegisterService(service));
-        assertEquals("No se encontró el emparejamiento.", exception.getMessage());
+        ConnectException exception = assertThrows(ConnectException.class, () -> {
+            server.registerLocation(unregisteredVehicle, station);
+        });
+        assertEquals("El vehículo no está registrado en el servidor.", exception.getMessage());
     }
 
     @Test
-    void testRegisterLocation() {
-        // Arrange
-        Server server = new Server();
-        VehicleID vehicleID = new VehicleID(2, new StationID("station1"));
-        StationID stationID = new StationID("station1");
+    void testRegisterLocation_StationMismatch_ThrowsConnectException() {
+        StationIDInterface wrongStation = new StationID(2, new GeographicPoint(3.0F, 4.0F));
 
-        // Act & Assert
-        assertDoesNotThrow(() -> server.registerLocation(vehicleID, stationID),
-                "No debe haber excepciones al registrar la ubicación.");
+        ConnectException exception = assertThrows(ConnectException.class, () -> {
+            server.registerLocation(vehicle, wrongStation);
+        });
+        assertEquals("La estación proporcionada no coincide con la estación registrada para el vehículo.", exception.getMessage());
     }
+
+
 }

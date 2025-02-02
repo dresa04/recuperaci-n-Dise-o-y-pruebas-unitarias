@@ -1,8 +1,13 @@
 package data.interfaces;
 
-import data.StationID;
+import data.interfaces.StationIDInterface;
 
 public interface VehicleIDInterface {
     int getId();
-    StationID getStation();
+    StationIDInterface getStation();
+
+    boolean equals(Object o) ;
+
+    int hashCode() ;
+    String toString() ;
 }

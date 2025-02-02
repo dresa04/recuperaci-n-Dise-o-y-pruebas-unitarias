@@ -1,5 +1,6 @@
 package services.smartfeatures;
 
+import micromobility.PMVehicle;
 import services.Exceptions.PMVPhisicalException;
 import services.Exceptions.ProceduralException;
 import services.smartfeatures.Interfaces.ArduinoMicroControllerInterface;
@@ -43,6 +44,10 @@ public class ArduinoMicroController implements ArduinoMicroControllerInterface {
         if (new Random().nextInt(100) < 5) { // 5% de fallo mecánico
             throw new PMVPhisicalException("Fallo en el sistema de arranque del vehículo.");
         }
+
+        // Llamar a setUnderWay() para cambiar correctamente el estado del vehículo
+        PMVehicle.setUnderWay();
+
         isDriving = true;
         System.out.println("El vehículo ha comenzado a moverse.");
     }

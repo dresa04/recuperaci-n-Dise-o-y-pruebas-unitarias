@@ -1,70 +1,54 @@
 package data;
 
 import data.Exceptions.InvalidStationIDException;
-import org.junit.jupiter.api.BeforeEach;
+import data.interfaces.GeographicPointInterface;
+import data.interfaces.StationIDInterface;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StationIDTest {
 
-    private StationID station1;
-    private StationID station2;
+    @Test
+    void testValidStationID() {
+        GeographicPointInterface geoPoint = new GeographicPoint(41.1234f, 2.5678f);
+        StationIDInterface station = new StationID(1, geoPoint);
 
-    @BeforeEach
-    void setUp() {
-        station1 = new StationID("ST123456");
-        station2 = new StationID("ST654321");
+        assertEquals(1, station.getID(), "El ID de la estación no es el esperado.");
+        assertEquals(geoPoint, station.getgeoPoint(), "El punto geográfico no es el esperado.");
     }
 
     @Test
-    void testConstructor_ValidID() {
-        assertNotNull(station1);
-        assertEquals("ST123456", station1.getId());
+    void testInvalidStationIDThrowsException() {
+        GeographicPointInterface geoPoint = new GeographicPoint(41.1234f, 2.5678f);
+
+        assertThrows(InvalidStationIDException.class, () -> new StationID(0, geoPoint),
+                "Se esperaba una excepción para ID igual a 0.");
+        assertThrows(InvalidStationIDException.class, () -> new StationID(-5, geoPoint),
+                "Se esperaba una excepción para ID negativo.");
     }
 
     @Test
-    void testConstructor_NullID() {
-        Exception exception = assertThrows(InvalidStationIDException.class, () ->
-                new StationID(null)
-        );
-        assertEquals("El identificador de estación no puede ser null o vacío.", exception.getMessage());
-    }
+    void testEqualsAndHashCode() {
+        GeographicPointInterface geoPoint1 = new GeographicPoint(41.1234f, 2.5678f);
+        GeographicPointInterface geoPoint2 = new GeographicPoint(42.5678f, 3.7890f);
 
-    @Test
-    void testConstructor_EmptyID() {
-        Exception exception = assertThrows(InvalidStationIDException.class, () ->
-                new StationID("")
-        );
-        assertEquals("El identificador de estación no puede ser null o vacío.", exception.getMessage());
-    }
+        StationIDInterface station1 = new StationID(1, geoPoint1);
+        StationIDInterface station2 = new StationID(1, geoPoint1);
+        StationIDInterface station3 = new StationID(2, geoPoint2);
 
-    @Test
-    void testConstructor_InvalidFormat() {
-        Exception exception = assertThrows(InvalidStationIDException.class, () ->
-                new StationID("123456ST")
-        );
-        assertEquals("El identificador de estación debe seguir el formato STXXXXXX.", exception.getMessage());
-    }
+        assertEquals(station1, station2, "Las estaciones deberían ser iguales.");
+        assertNotEquals(station1, station3, "Las estaciones deberían ser diferentes.");
 
-    @Test
-    void testEquals_SameID() {
-        StationID stationDuplicate = new StationID("ST123456");
-        assertEquals(station1, stationDuplicate);
-    }
-
-    @Test
-    void testEquals_DifferentID() {
-        assertNotEquals(station1, station2);
-    }
-
-    @Test
-    void testHashCode() {
-        StationID stationDuplicate = new StationID("ST123456");
-        assertEquals(station1.hashCode(), stationDuplicate.hashCode());
+        assertEquals(station1.hashCode(), station2.hashCode(), "Los códigos hash deberían ser iguales.");
+        assertNotEquals(station1.hashCode(), station3.hashCode(), "Los códigos hash deberían ser diferentes.");
     }
 
     @Test
     void testToString() {
-        assertEquals("StationID{id='ST123456'}", station1.toString());
+        GeographicPointInterface geoPoint = new GeographicPoint(41.1234f, 2.5678f);
+        StationIDInterface station = new StationID(1, geoPoint);
+
+        String expectedString = "StationID {ID='1'geoPoint='GeographicPoint{latitude=41.1234, longitude=2.5678}}";
+        assertEquals(expectedString, station.toString(), "El método toString no devuelve el formato esperado.");
     }
 }

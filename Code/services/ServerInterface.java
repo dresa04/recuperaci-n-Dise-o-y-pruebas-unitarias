@@ -5,6 +5,12 @@ import data.GeographicPoint;
 import data.StationID;
 import data.UserAccount;
 import data.VehicleID;
+import data.interfaces.GeographicPointInterface;
+import data.interfaces.StationIDInterface;
+import data.interfaces.UserAccountInterface;
+import data.interfaces.VehicleIDInterface;
+import micromobility.JourneyService;
+import micromobility.JourneyServiceInterface;
 import services.Exceptions.InvalidPairingArgsException;
 import services.Exceptions.PMVNotAvailException;
 import services.Exceptions.PairingNotFoundException;
@@ -12,20 +18,21 @@ import services.Exceptions.PairingNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public interface ServerInterface {
-    // External services involved in the shared micromobility system
-    void checkPMVAvail(VehicleID vhID) throws PMVNotAvailException, ConnectException;
-
-    void registerPairing(UserAccount user, VehicleID veh, StationID st, GeographicPoint loc, LocalDateTime date)
+public interface ServerInterface { // External service for the persistent storage
+    // To be invoked by the use case controller
+    void checkPMVAvail(VehicleIDInterface vhID)
+            throws PMVNotAvailException, ConnectException;
+    void registerPairing(UserAccountInterface user, VehicleIDInterface veh, StationIDInterface st, GeographicPointInterface loc, LocalDateTime date, JourneyServiceInterface journey)
             throws InvalidPairingArgsException, ConnectException;
-
-    void stopPairing(UserAccount user, VehicleID veh, StationID st, GeographicPoint loc, LocalDateTime date,
-                     float avSp, float dist, int dur, BigDecimal imp) throws InvalidPairingArgsException, ConnectException;
-
+    void stopPairing(UserAccountInterface user, VehicleIDInterface veh, StationIDInterface st,
+                     GeographicPointInterface loc, LocalDateTime date, float avSp, float dist,
+                     int dur, BigDecimal imp, JourneyServiceInterface journey)
+            throws InvalidPairingArgsException, ConnectException;
     // Internal operations
-    void setPairing(UserAccount user, VehicleID veh, StationID st, GeographicPoint loc, LocalDateTime date);
+    void setPairing(UserAccountInterface user, VehicleIDInterface veh, StationIDInterface st, GeographicPointInterface loc, LocalDateTime date, JourneyServiceInterface journey);
 
-    void unPairRegisterService(JourneyService s) throws PairingNotFoundException;
+    void unPairRegisterService(JourneyService s)
+            throws PairingNotFoundException;
 
-    void registerLocation(VehicleID veh, StationID st);
+    void registerLocation(VehicleIDInterface veh, StationIDInterface st) throws ConnectException;
 }

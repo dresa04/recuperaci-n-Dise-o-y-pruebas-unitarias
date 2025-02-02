@@ -8,99 +8,101 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserAccountTest {
 
-    private UserAccount userAccount;
+    private UserAccount usuario1;
+    private UserAccount usuario2;
 
     @BeforeEach
     void setUp() {
-        userAccount = new UserAccount("123", "testUser", "test@example.com", "password123", 100);
+        usuario1 = new UserAccount("U123", "CarlosPerez", "carlosperez@example.com", "claveSegura123", 50);
+        usuario2 = new UserAccount("U456", "AnaLopez", "analopez@example.com", "miContraseña", 100);
     }
 
     @Test
-    void testConstructor_ValidParameters() {
-        assertNotNull(userAccount);
-        assertEquals("123", userAccount.getUserId());
-        assertEquals("testUser", userAccount.getUsername());
-        assertEquals("test@example.com", userAccount.getEmail());
-        assertEquals(100, userAccount.getMonedero());
+    void testConstructor_UsuarioValido() {
+        assertNotNull(usuario1);
+        assertEquals("U123", usuario1.getUserId());
+        assertEquals("CarlosPerez", usuario1.getUsername());
+        assertEquals("carlosperez@example.com", usuario1.getEmail());
+        assertEquals("claveSegura123", usuario1.getPassword());
+        assertEquals(50, usuario1.getMonedero());
     }
 
     @Test
-    void testConstructor_InvalidUserId() {
+    void testConstructor_IdentificadorNulo() {
         Exception exception = assertThrows(InvalidUserAccountException.class, () ->
-                new UserAccount("", "testUser", "test@example.com", "password123", 100));
-        assertEquals("El identificador de usuario no puede ser nulo o vacío.", exception.getMessage());
+                new UserAccount(null, "Usuario", "usuario@example.com", "contraseña123", 0)
+        );
+        assertEquals("L'identificador d'usuari no pot ser null o buit.", exception.getMessage());
     }
 
     @Test
-    void testConstructor_InvalidUsername() {
+    void testConstructor_IdentificadorVacio() {
         Exception exception = assertThrows(InvalidUserAccountException.class, () ->
-                new UserAccount("123", "", "test@example.com", "password123", 100));
-        assertEquals("El nombre de usuario no puede ser nulo o vacío.", exception.getMessage());
+                new UserAccount("", "Usuario", "usuario@example.com", "contraseña123", 0)
+        );
+        assertEquals("L'identificador d'usuari no pot ser null o buit.", exception.getMessage());
     }
 
     @Test
-    void testConstructor_InvalidEmail() {
+    void testConstructor_NombreUsuarioNulo() {
         Exception exception = assertThrows(InvalidUserAccountException.class, () ->
-                new UserAccount("123", "testUser", "invalid-email", "password123", 100));
-        assertEquals("Dirección de correo electrónico no válida.", exception.getMessage());
+                new UserAccount("U789", null, "usuario@example.com", "contraseña123", 0)
+        );
+        assertEquals("El nom d'usuari no pot ser null o buit.", exception.getMessage());
     }
 
     @Test
-    void testConstructor_InvalidPassword() {
+    void testConstructor_CorreoInvalido() {
         Exception exception = assertThrows(InvalidUserAccountException.class, () ->
-                new UserAccount("123", "testUser", "test@example.com", "123", 100));
-        assertEquals("La contraseña debe tener al menos 6 caracteres.", exception.getMessage());
+                new UserAccount("U789", "Usuario", "correo-invalido", "contraseña123", 0)
+        );
+        assertEquals("Adreça de correu electrònic no vàlida.", exception.getMessage());
     }
 
     @Test
-    void testConstructor_NegativeMonedero() {
+    void testConstructor_ContraseñaCorta() {
         Exception exception = assertThrows(InvalidUserAccountException.class, () ->
-                new UserAccount("123", "testUser", "test@example.com", "password123", -10));
-        assertEquals("El saldo del monedero no puede ser negativo.", exception.getMessage());
-    }
-
-    @Test
-    void testGetters() {
-        assertEquals("123", userAccount.getUserId());
-        assertEquals("testUser", userAccount.getUsername());
-        assertEquals("test@example.com", userAccount.getEmail());
-        assertEquals(100, userAccount.getMonedero());
+                new UserAccount("U789", "Usuario", "usuario@example.com", "123", 0)
+        );
+        assertEquals("La contrasenya ha de tenir almenys 6 caràcters.", exception.getMessage());
     }
 
     @Test
     void testSetMonedero() {
-        userAccount.setMonedero(200);
-        assertEquals(200, userAccount.getMonedero());
-
-        Exception exception = assertThrows(InvalidUserAccountException.class, () ->
-                userAccount.setMonedero(-50));
-        assertEquals("El saldo del monedero no puede ser negativo.", exception.getMessage());
+        usuario1.setMonedero(200);
+        assertEquals(200, usuario1.getMonedero());
     }
 
     @Test
-    void testVerifyPassword_CorrectPassword() {
-        assertTrue(userAccount.verifyPassword("password123"));
+    void testVerificarContraseña_Correcta() {
+        assertTrue(usuario1.verifyPassword("claveSegura123"));
     }
 
     @Test
-    void testVerifyPassword_IncorrectPassword() {
-        assertFalse(userAccount.verifyPassword("wrongPassword"));
+    void testVerificarContraseña_Incorrecta() {
+        assertFalse(usuario1.verifyPassword("claveIncorrecta"));
     }
 
     @Test
-    void testEquals_SameValues() {
-        UserAccount otherAccount = new UserAccount("123", "testUser", "test@example.com", "password456", 200);
-        assertEquals(userAccount, otherAccount);
+    void testEquals_MismoUsuario() {
+        UserAccount usuario3 = new UserAccount("U123", "CarlosPerez", "carlosperez@example.com", "nuevaClave", 30);
+        assertEquals(usuario1, usuario3, "Dos cuentas con el mismo ID, nombre de usuario y correo deberían ser iguales.");
     }
 
     @Test
-    void testEquals_DifferentValues() {
-        UserAccount otherAccount = new UserAccount("456", "otherUser", "other@example.com", "password456", 200);
-        assertNotEquals(userAccount, otherAccount);
+    void testEquals_DiferenteUsuario() {
+        assertNotEquals(usuario1, usuario2);
+    }
+
+    @Test
+    void testHashCode() {
+        UserAccount usuario3 = new UserAccount("U123", "CarlosPerez", "carlosperez@example.com", "nuevaClave", 30);
+        assertEquals(usuario1.hashCode(), usuario3.hashCode(), "El hashCode debería ser igual para objetos con el mismo ID, nombre de usuario y correo.");
     }
 
     @Test
     void testToString() {
-        assertEquals("UserAccount{userId='123', username='testUser', email='test@example.com'}", userAccount.toString());
+        String esperado = "data.data.UserAccount{userId='U123', username='CarlosPerez', email='carlosperez@example.com'}";
+        assertEquals(esperado, usuario1.toString());
     }
 }

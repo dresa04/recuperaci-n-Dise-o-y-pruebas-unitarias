@@ -5,6 +5,9 @@ import data.interfaces.UserAccountInterface;
 
 import java.util.Objects;
 
+/**
+ * Classe que representa un compte d'usuari.
+ */
 public class UserAccount implements UserAccountInterface {
     private final String userId;
     private final String username;
@@ -14,21 +17,17 @@ public class UserAccount implements UserAccountInterface {
 
     public UserAccount(String userId, String username, String email, String password, int monedero) {
         if (userId == null || userId.isEmpty()) {
-            throw new InvalidUserAccountException("El identificador de usuario no puede ser nulo o vacío.");
+            throw new InvalidUserAccountException("L'identificador d'usuari no pot ser null o buit.");
         }
         if (username == null || username.isEmpty()) {
-            throw new InvalidUserAccountException("El nombre de usuario no puede ser nulo o vacío.");
+            throw new InvalidUserAccountException("El nom d'usuari no pot ser null o buit.");
         }
         if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            throw new InvalidUserAccountException("Dirección de correo electrónico no válida.");
+            throw new InvalidUserAccountException("Adreça de correu electrònic no vàlida.");
         }
         if (password == null || password.length() < 6) {
-            throw new InvalidUserAccountException("La contraseña debe tener al menos 6 caracteres.");
+            throw new InvalidUserAccountException("La contrasenya ha de tenir almenys 6 caràcters.");
         }
-        if (monedero < 0) {
-            throw new InvalidUserAccountException("El saldo del monedero no puede ser negativo.");
-        }
-
         this.userId = userId;
         this.username = username;
         this.email = email;
@@ -36,35 +35,32 @@ public class UserAccount implements UserAccountInterface {
         this.monedero = monedero;
     }
 
-    @Override
+    // Getters
     public String getUserId() {
         return userId;
     }
 
-    @Override
     public String getUsername() {
         return username;
     }
 
-    @Override
     public String getEmail() {
         return email;
     }
 
-    @Override
+    public String getPassword() {
+        return password;
+    }
+
     public int getMonedero() {
         return monedero;
     }
 
-    @Override
-    public void setMonedero(int nuevoSaldo) {
-        if (nuevoSaldo < 0) {
-            throw new InvalidUserAccountException("El saldo del monedero no puede ser negativo.");
-        }
-        this.monedero = nuevoSaldo;
+    public void setMonedero(int nou_saldo) {
+        this.monedero = nou_saldo;
     }
 
-    @Override
+    // Mètode per verificar la contrasenya
     public boolean verifyPassword(String inputPassword) {
         return this.password.equals(inputPassword);
     }
@@ -86,10 +82,10 @@ public class UserAccount implements UserAccountInterface {
 
     @Override
     public String toString() {
-        return "UserAccount{userId='" + userId + "', username='" + username + "', email='" + email + "'}";
+        return "data.data.UserAccount{" +
+                "userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
-
-
-
-
 }

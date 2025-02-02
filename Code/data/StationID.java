@@ -1,43 +1,36 @@
 package data;
 
 import data.Exceptions.InvalidStationIDException;
+import data.interfaces.GeographicPointInterface;
 import data.interfaces.StationIDInterface;
-import java.util.Objects;
 
-public final class StationID implements StationIDInterface {
-    private final String id;
+public class StationID implements StationIDInterface {
+    private final Integer ID;
+    private final GeographicPointInterface geoPoint;
 
-    public StationID(int id) {
-        if (id == null || id.isEmpty()) {
-            throw new InvalidStationIDException("El identificador de estación no puede ser null o vacío.");
+    public StationID(int ID, GeographicPointInterface geoPoint){
+        this.ID = ID;
+        this.geoPoint = geoPoint;
+        if (ID <= 0) {
+            throw new InvalidStationIDException("L'ID de la estació ha de ser un nombre positiu.");
         }
-        if (!id.matches("^ST\\d{6}$")) { // Formato: ST seguido de 6 dígitos
-            throw new InvalidStationIDException("El identificador de estación debe seguir el formato STXXXXXX.");
-        }
-        this.id = id;
     }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
+    public int getID(){return ID;}
+    public GeographicPointInterface getgeoPoint(){return geoPoint;}
+    public boolean equals (Object o) {
+        boolean eq;
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        StationID stationID = (StationID) o;
-        return id.equals(stationID.id);
+        StationID gP = (StationID) o;
+        eq = (ID == gP.ID) && (geoPoint.equals(gP.geoPoint));
+        return eq;
     }
-
-    @Override
     public int hashCode() {
-        return Objects.hash(id);
+        int result = Integer.hashCode(ID);
+        result = 31 * result + (geoPoint != null ? geoPoint.hashCode() : 0);
+        return result;
     }
-
-    @Override
-    public String toString() {
-        return "StationID{" + "id='" + id + '\'' + '}';
+    public String toString(){
+        return "StationID {" + "ID='" + ID + '\'' + "geoPoint='" + geoPoint.toString() + '}';
     }
-
 }

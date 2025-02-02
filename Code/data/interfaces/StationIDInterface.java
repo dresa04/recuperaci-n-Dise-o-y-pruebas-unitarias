@@ -1,5 +1,10 @@
 package data.interfaces;
 
 public interface StationIDInterface {
-    String getId();
+    int getID();
+    GeographicPointInterface getgeoPoint();
+    boolean equals(Object o);
+    int hashCode();
+    String toString();
+
 }
