@@ -8,6 +8,7 @@ import services.Exceptions.*;
 import services.ServerInterface;
 import services.smartfeatures.Interfaces.QRDecoderInterface;
 
+import java.math.RoundingMode;
 import java.net.ConnectException;
 import java.awt.image.BufferedImage;
 import java.time.Duration;
@@ -30,7 +31,7 @@ public class JourneyRealizeHandler {
     private VehicleIDInterface vehicleID;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private boolean inProgress;
+    boolean inProgress;
     private PMVehicle vehicle;
 
     /**
@@ -182,7 +183,7 @@ public class JourneyRealizeHandler {
         if (duration == 0) {
             return BigDecimal.ZERO;
         }
-        return distance.divide(new BigDecimal(duration), 2, BigDecimal.ROUND_HALF_UP);
+        return distance.divide(new BigDecimal(duration), 2, RoundingMode.HALF_UP);
     }
 
     /**
